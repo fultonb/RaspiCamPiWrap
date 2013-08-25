@@ -5,6 +5,7 @@ Created on Aug 22, 2013
 '''
 import unittest
 from cam.raspicam import RaspiCam
+from datetime import datetime
 
 
 class Test(unittest.TestCase):
@@ -19,10 +20,14 @@ class Test(unittest.TestCase):
 
 
     def test_current_timestamp(self):
-        expected = '2013-08-25_09-31-59.126116'
+        expected = str(datetime.now())
         actual = self.cam.current_timestamp()
         
-        self.assertEqual(expected, actual, 'Values should be equal')
+        # For visual inspection of actual timestamp.
+        print(actual)
+        
+        # Just check the Year-Month-Day
+        self.assertEqual(expected[:10], actual[:10], 'Values should be equal')
 
 
 if __name__ == "__main__":
