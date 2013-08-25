@@ -41,6 +41,12 @@ class RaspiCam(object):
     
     
     def take_pics(self):
+        '''
+        This method uses the linux raspistill application to take pictures.
+        At night, the exposure is set to 'night'.
+        Pictures are taken every minute (default).  This time can be changed in
+        the picam.config file.
+        '''
         # Lets start taking photos!
         try:
             while True:
@@ -69,12 +75,27 @@ class RaspiCam(object):
     
     
     def current_timestamp(self):
+        '''
+        Returns a timestamp in the following format:
+            year-month-day_hour-min-sec
+            2013-08-25_09-31-59.126116
+            
+        '''
         # Remove spaces and colons.
         now = str(datetime.now()).replace(' ', '_')
         return now.replace(':', '-')
     
     
-    def is_night_time(self):
+    def is_night_time(self, dawn=7, dusk=20):
+        '''
+        Returns True if night time else False.
+        Night time is considered to be the hours between dawn and dusk. 
+        The time range is [0:23].
+        Ex. 8:00 AM is 8 while 8:00 PM is 20.
+        
+        :param dawn:  Defaulted to 7:00 AM.
+        :param dusk:  Defaulted to 8:00 PM.
+        '''
         returnVal = False
         
         now = time.localtime()
