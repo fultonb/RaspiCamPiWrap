@@ -58,7 +58,8 @@ class RaspiCam(object):
                     self.ex = 'auto'
                     
                 cmd = 'raspistill -o ' + filename \
-                                       + ' -t 1000 -ex ' + self.ex \
+                                       + ' -t 1000 ' \
+                                       + ' -ex ' + self.ex \
                                        + ' -awb ' + self.awb \
                                        + ' -ev ' + str(self.photo_ev) \
                                        + ' -w ' + str(self.photo_width) \
@@ -84,6 +85,7 @@ class RaspiCam(object):
         # Remove spaces and colons.
         now = str(datetime.now()).replace(' ', '_')
         return now.replace(':', '-')
+
     
     
     def is_night_time(self, dawn=7, dusk=20):
@@ -99,7 +101,7 @@ class RaspiCam(object):
         returnVal = False
         
         now = time.localtime()
-        if now.tm_hour >= 20 and now.tm_hour <= 7:
+        if now.tm_hour >= dusk and now.tm_hour <= dawn:
             returnVal = True
     
         return returnVal 
