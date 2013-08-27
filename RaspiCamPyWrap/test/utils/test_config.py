@@ -19,27 +19,15 @@ class Test(unittest.TestCase):
         self.conf = None
         
 
-    def test_get_sections(self):        
-        expected = ['pictures', 'video']
-        actual = self.conf.get_sections()
-        
-        self.assertEqual(expected, actual, 'Values should be equal')
-        
-        
-    def test_get_picture_keys(self):
-        expected = ['ex', 'awb', 'photo_ev', 'photo_width', 'photo_height', 
-                    'photo_rotate', 'photo_interval', 'photo_dir']
-        
-        actual = self.conf.get_keys('pictures')
-        
-        self.assertEqual(expected, actual, 'Values should be equal')
+    def test_get_picture_vals_VISUALLY(self):        
+        '''
+        Since these values can be changed at any time, you can visually read
+        the src/picam.config file and compare it to this output.
+        '''
+        print(self.conf.get_picture_vals())
         
         
-    def test_get_video_keys(self):
-        expected = []
-        actual = self.conf.get_keys('video')
         
-        self.assertEqual(expected, actual, 'Values should be equal')
     
     
 

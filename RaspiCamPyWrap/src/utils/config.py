@@ -6,6 +6,15 @@ Created on Aug 23, 2013
 import configparser
 import os
 
+
+#===============================================================================
+# Config
+#
+# This class reads a config file and returns its values.
+#
+# The config file used is src/picam.config
+#
+#===============================================================================
 class Config(object):
     '''
     This class reads a config file and returns its values.
@@ -23,11 +32,18 @@ class Config(object):
         
     def get_picture_vals(self):
         '''
-        Returns an array of tuples holding the key/value pairs.
+        Returns an array of tuples holding the key/value pairs for all values 
+        in the [picture] section of the config file.
         Ex.  [('ex', 'auto'), ('awb', 'auto'), ('photo_ev', '0'), ...]
 
         '''
-        return self.config.items('pictures')
+        return_val = []
+        try:
+            return_val = self.config.items('pictures')
+        except configparser.NoSectionError:
+            print('A NoSectionError has occurred.')
+                
+        return return_val
         
                 
     def get_video_vals(self):
@@ -36,34 +52,19 @@ class Config(object):
         Ex.  [('ex', 'auto'), ('awb', 'auto'), ('photo_ev', '0'), ...]
 
         '''
-        return self.config.items('video')
+        return_val = []
+        try:
+            return_val = self.config.items('video')
+        except configparser.NoSectionError:
+            print('A NoSectionError has occurred.')
                 
-                
-    def get_sections(self): 
-        '''
-        Returns a list of the sections contained in the config file.
-        Ex.  ['pictures', 'video']
-        '''
-        return self.config.sections()
-    
-    
-    def get_keys(self, section):
-        '''
-        Returns a list of key values from the config file.
-        Ex. ['ex', 'awb', 'photo_ev', 'photo_width', 'photo_height', ...]
-                
-        :param section:  'pictures' or 'video'
-        '''
-        
-        return [key for key in self.config[section]]
+        return return_val
     
     
     
+# For quick debug purposes only
 if __name__ == '__main__':
     conf = Config()
    
-    print(conf.get_keys('pictures'))
     vals = conf.get_picture_vals()
     print(vals)
-#     for (key, val) in vals:
-#         print(key + ' : ' + val)

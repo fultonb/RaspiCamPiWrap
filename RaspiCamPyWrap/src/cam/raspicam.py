@@ -6,7 +6,7 @@ Created on Aug 22, 2013
 from datetime import datetime
 import time
 import subprocess
-
+from utils.config import Config
 
 #===============================================================================
 # RaspiCam
@@ -23,7 +23,16 @@ class RaspiCam(object):
     def __init__(self):
         '''
         Constructor
+        
+        See src/picam.config file for all options.
+        More documentation at:
+        http://www.raspberrypi.org/wp-content/uploads/2013/07/RaspiCam-Documentation.pdf
+        
+        These default values can be changed or added to, in the picam.config file.
         '''
+        # Default values:
+        
+        # Exposure and Automatic White Balance
         self.ex  = 'auto'
         self.awb = 'auto'
         
@@ -39,7 +48,23 @@ class RaspiCam(object):
         
         self.photo_dir = 'today'
     
+        # Config object used to get values from the config file.
+        self.conf = Config()
+        
     
+    def set_pic_vars_from_config(self):
+        '''
+        This method will set attributes for pictures, from:
+           src/picam.config
+           
+        If the config file does NOT exist, then the default values in the 
+        constructor will be used.
+        '''        
+        pic_vals = self.conf.get_picture_vals()
+        for (key, val) in pic_vals:
+            setattr(self, key, val)
+     
+        
     def take_pics(self):
         '''
         This method uses the linux raspistill application to take pictures.
@@ -51,7 +76,9 @@ class RaspiCam(object):
         try:
             while True:
                 filename = self.photo_dir + '/photo_' + self.current_timestamp() + '.jpg'
+                self.set_pic_vars_from_config()
                 
+                # Change exposure if it is dark out.
                 if  self.is_night_time():
                     self.ex = 'night'
                 else:
@@ -98,12 +125,12 @@ class RaspiCam(object):
         :param dawn:  Defaulted to 7:00 AM.
         :param dusk:  Defaulted to 8:00 PM.
         '''
-        returnVal = False
+        return_val = False
         
         now = time.localtime()
         if now.tm_hour >= dusk and now.tm_hour <= dawn:
-            returnVal = True
+            return_val = True
     
-        return returnVal 
+        return return_val 
 
 

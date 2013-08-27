@@ -71,7 +71,13 @@ class Test(unittest.TestCase):
         self.assertEqual(expected, actual, 'Values should be equal')
 
 
-
+    def test_set_self_vars_from_config_VISUALLY(self):        
+        '''
+        Since these values can be changed at any time, you can visually read
+        the src/picam.config file and compare it to this output.
+        '''
+        self.cam.set_pic_vars_from_config()
+        print(vars(self.cam))
 
 
 if __name__ == "__main__":
