@@ -22,7 +22,7 @@ class Config(object):
     This class reads a config file and returns its values.
     '''
 
-    config_file = os.path.abspath('../../src/picam.config')
+    config_file = None
 
     def __init__(self):
         '''
@@ -39,7 +39,7 @@ class Config(object):
             self.config_file = os.path.abspath('../src/picam.config')
         elif system is 'Windows':
             self.config_file = os.path.abspath('../../src/picam.config')
-        
+        print(system)
         
         
     def get_picture_vals(self):
