@@ -22,12 +22,12 @@ class Config(object):
     This class reads a config file and returns its values.
     '''
 
-    config_file = None
-
     def __init__(self):
         '''
         Constructor
         '''
+        self.config_file = None
+        
         self.set_config_file_path()
         self.config = configparser.ConfigParser()
         self.config.read(self.config_file)
