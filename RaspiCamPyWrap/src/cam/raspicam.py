@@ -32,9 +32,15 @@ class RaspiCam(object):
         '''
         # Default values:
         
-        # Exposure and Automatic White Balance
-        self.ex  = 'auto'
-        self.awb = 'auto'
+        # Exposure
+        self.photo_ex  = None        
+        self.photo_day_ex = 'auto'
+        self.photo_night_ex = 'auto'
+        
+        # Automatic White Balance
+        self.photo_awb = None
+        self.photo_day_awb = 'auto'
+        self.photo_night_awb = 'auto'
         
         # EV level
         self.photo_ev = 0
@@ -78,21 +84,21 @@ class RaspiCam(object):
                 filename = self.photo_dir + '/photo_' + self.current_timestamp() + '.jpg'
                 self.set_pic_vars_from_config()
                 
-                # Change exposure if it is dark out.
-                if  self.is_night_time():
-                    self.ex = 'night'
-                else:
-                    self.ex = 'auto'
-                    
+                # Set Exposure and Automatic White Balance for day or night time.
+                self.set_ex_and_awb()
+                
+                # This command takes a single picture.
                 cmd = 'raspistill -o ' + filename \
                                        + ' -t 1000 ' \
-                                       + ' -ex ' + self.ex \
-                                       + ' -awb ' + self.awb \
+                                       + ' -photo_ex ' + self.photo_ex \
+                                       + ' -awb ' + self.photo_awb \
                                        + ' -ev ' + str(self.photo_ev) \
                                        + ' -w ' + str(self.photo_width) \
                                        + ' -h ' + str(self.photo_height) \
                                        + ' -rot ' + str(self.photo_rotate)
                 subprocess.call(cmd, shell=True)
+                
+                # Sleep until it is time for the next picture.
                 time.sleep(self.photo_interval)
         
         except Exception as e:
@@ -102,35 +108,65 @@ class RaspiCam(object):
             print("\nGoodbye!")
     
     
+    def set_ex_and_awb(self):
+        '''
+        This method changes the Exposure and Automatic White Balance for
+        day or night time.
+        '''
+        if self.is_night_time():
+            self.photo_ex = self.photo_night_ex
+            self.photo_awb = self.photo_night_awb
+        else:
+            self.photo_ex = self.photo_day_ex
+            self.photo_awb = self.photo_day_awb                    
+        
+        
     def current_timestamp(self):
         '''
         Returns a timestamp in the following format:
             year-month-day_hour-min-sec
             2013-08-25_09-31-59.126116
-            
         '''
         # Remove spaces and colons.
         now = str(datetime.now()).replace(' ', '_')
         return now.replace(':', '-')
 
-    
-    
+        
     def is_night_time(self, dawn=7, dusk=20):
         '''
         Returns True if night time else False.
         Night time is considered to be the hours between dawn and dusk. 
+        We are making the assumption that dusk or dawn never happens 
+        at 12:00 noon (hour 12).
+        
         The time range is [0:23].
         Ex. 8:00 AM is 8 while 8:00 PM is 20.
         
         :param dawn:  Defaulted to 7:00 AM.
         :param dusk:  Defaulted to 8:00 PM.
         '''
-        return_val = False
+        is_night = True
         
         now = time.localtime()
-        if now.tm_hour >= dusk and now.tm_hour <= dawn:
-            return_val = True
+        the_hour = now.tm_hour
+            
+        # Day time is when the_hour is NOT between dusk and dawn.
+        
+        # dusk before midnight and dawn after midnight
+        if (dusk <= 23 and dusk > 12) and (dawn >= 0 and dawn < 12):
+            if the_hour < dusk and the_hour > dawn:
+                is_night = False
+        
+        # dusk before midnight and dawn before midnight
+        elif (dusk <= 23 and dusk > 12) and (dawn <= 23 and dawn > 12):
+            if the_hour < dusk:
+                is_night = False
+        
+        # dusk after midnight and dawn after midnight
+        elif (dusk >= 0 and dusk < 12) and (dawn >= 0 and dawn < 12):
+            if the_hour < dusk:
+                is_night = False
     
-        return return_val 
+        return is_night 
 
 
