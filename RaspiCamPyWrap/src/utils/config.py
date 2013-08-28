@@ -5,6 +5,8 @@ Created on Aug 23, 2013
 '''
 import configparser
 import os
+import platform
+import ast
 
 
 #===============================================================================
@@ -26,8 +28,18 @@ class Config(object):
         '''
         Constructor
         '''
+        self.set_config_file_path()
         self.config = configparser.ConfigParser()
         self.config.read(self.config_file)
+        
+        
+    def set_config_file_path(self):
+        system = platform.system()
+        if system is 'Linux':
+            self.config_file = os.path.abspath('../src/picam.config')
+        elif system is 'Windows':
+            self.config_file = os.path.abspath('../../src/picam.config')
+        
         
         
     def get_picture_vals(self):
@@ -40,6 +52,9 @@ class Config(object):
         return_val = []
         try:
             return_val = self.config.items('pictures')
+            for (key, val) in return_val:
+                if val.isdigit():
+                    val = ast.literal_eval(val)
         except configparser.NoSectionError:
             print('A NoSectionError has occurred.')
                 
