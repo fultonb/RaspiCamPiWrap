@@ -32,15 +32,17 @@ class Config(object):
         
         
     def set_config_file_path(self):
-        # Default
-        self.config_file = os.path.abspath('../src/picam.config')
+        '''
+        Path seems to be different on Windows and Linux platforms.
+        This method makes up for the differences.
         
+        '''
         system = platform.system()
-        if system is 'Linux':
+        if system == 'Linux':
             self.config_file = os.path.abspath('../src/picam.config')
-        elif system is 'Windows':
+        elif system == 'Windows':
             self.config_file = os.path.abspath('../../src/picam.config')
-        
+  
         
     def get_picture_vals(self):
         '''
