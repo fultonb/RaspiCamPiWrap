@@ -90,7 +90,7 @@ class RaspiCam(object):
                 # This command takes a single picture.
                 cmd = 'raspistill -o ' + filename \
                                        + ' -t 1000 ' \
-                                       + ' -photo_ex ' + self.photo_ex \
+                                       + ' -ex ' + self.photo_ex \
                                        + ' -awb ' + self.photo_awb \
                                        + ' -ev ' + str(self.photo_ev) \
                                        + ' -w ' + str(self.photo_width) \
