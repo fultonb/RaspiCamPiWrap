@@ -8,6 +8,7 @@ import time
 import subprocess
 from utils.config import Config
 
+
 #===============================================================================
 # RaspiCam
 #
@@ -53,6 +54,9 @@ class RaspiCam(object):
         self.photo_interval = 60 # Interval between photos (seconds)
         
         self.photo_dir = 'today'
+        
+        self.dawn = 7
+        self.dusk = 20
     
         # Config object used to get values from the config file.
         self.conf = Config()
@@ -113,12 +117,15 @@ class RaspiCam(object):
         This method changes the Exposure and Automatic White Balance for
         day or night time.
         '''
-        if self.is_night_time():
-            self.photo_ex = self.photo_night_ex
-            self.photo_awb = self.photo_night_awb
-        else:
-            self.photo_ex = self.photo_day_ex
-            self.photo_awb = self.photo_day_awb                    
+        try:
+            if self.is_night_time(dawn=self.dawn, dusk=self.dusk):
+                self.photo_ex = self.photo_night_ex
+                self.photo_awb = self.photo_night_awb
+            else:
+                self.photo_ex = self.photo_day_ex
+                self.photo_awb = self.photo_day_awb      
+        except ValueError as ve:
+            print(ve + ' Default values will be used.')              
         
         
     def current_timestamp(self):
@@ -136,8 +143,7 @@ class RaspiCam(object):
         '''
         Returns True if night time else False.
         Night time is considered to be the hours between dawn and dusk. 
-        We are making the assumption that dusk or dawn never happens 
-        at 12:00 noon (hour 12).
+        We are making the assumption that dusk or dawn are never the same.
         
         The time range is [0:23].
         Ex. 8:00 AM is 8 while 8:00 PM is 20.
@@ -145,25 +151,28 @@ class RaspiCam(object):
         :param dawn:  Defaulted to 7:00 AM.
         :param dusk:  Defaulted to 8:00 PM.
         '''
-        is_night = True
+        # dawn and dusk cannot be the same value.
+        if dawn == dusk:
+            raise ValueError('dawn and dusk cannot be the same value')
         
+        is_night = True        
         now = time.localtime()
         the_hour = now.tm_hour
             
         # Day time is when the_hour is NOT between dusk and dawn.
         
         # dusk before midnight and dawn after midnight
-        if (dusk <= 23 and dusk > 12) and (dawn >= 0 and dawn < 12):
+        if (dusk <= 23 and dusk >= 12) and (dawn >= 0 and dawn <= 12):
             if the_hour < dusk and the_hour > dawn:
                 is_night = False
         
         # dusk before midnight and dawn before midnight
-        elif (dusk <= 23 and dusk > 12) and (dawn <= 23 and dawn > 12):
+        elif (dusk <= 23 and dusk >= 12) and (dawn <= 23 and dawn >= 12):
             if the_hour < dusk:
                 is_night = False
         
         # dusk after midnight and dawn after midnight
-        elif (dusk >= 0 and dusk < 12) and (dawn >= 0 and dawn < 12):
+        elif (dusk >= 0 and dusk <= 12) and (dawn >= 0 and dawn <= 12):
             if the_hour < dusk:
                 is_night = False
     

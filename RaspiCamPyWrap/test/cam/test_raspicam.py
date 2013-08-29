@@ -52,7 +52,23 @@ class Test(unittest.TestCase):
         self.assertEqual(expected, actual, 'Values should be equal')
 
 
-    def test_set_ex_and_awb_night(self):
+    def test_is_night_time_for_same_dusk_and_dawn(self):
+        try:
+            self.cam.is_night_time(dusk=12, dawn=12)
+        except:
+            self.assertRaises(ValueError)
+       
+        
+    def test_set_ex_and_awb_for_same_dusk_and_dawn(self):
+        try:
+            self.cam.dawn = 12
+            self.cam.dusk = 12
+            self.cam.set_ex_and_awb()
+        except:
+            self.assertRaises(ValueError)
+            
+            
+    def test_set_ex_and_awb(self):
         night = 'NIGHT'
         day = 'DAY'        
         
@@ -73,9 +89,18 @@ class Test(unittest.TestCase):
         self.assertEqual(expected, actual_ex, 'Values should be equal')
         self.assertEqual(expected, actual_awb, 'Values should be equal')
         
-        
-        
+    
+    def test_set_self_vars_from_config_VISUALLY(self):        
+        '''
+        Since these values can be changed at any time, you can visually read
+        the src/picam.config file and compare it to this output.
+        '''
+        self.cam.set_pic_vars_from_config()
+        print(vars(self.cam))
 
+
+    #----------------------- Helper functions --------------------------------#
+    
     def set_to_night_time(self):
         '''
         To simulate night time, place the hours of dawn and dusk 
@@ -87,7 +112,7 @@ class Test(unittest.TestCase):
         if the_hour == 23:
             self.mydusk = 22
             self.mydawn = 2
-        elif now == 0:
+        elif the_hour == 0:
             self.mydusk = 22
             self.mydawn = 2
         else:
@@ -108,18 +133,9 @@ class Test(unittest.TestCase):
             self.mydawn = 2
         else:
             self.mydusk = the_hour + 1
-            self.mydawn = the_hour + 2
+            self.mydawn = the_hour + 2     
         
-        
-    def test_set_self_vars_from_config_VISUALLY(self):        
-        '''
-        Since these values can be changed at any time, you can visually read
-        the src/picam.config file and compare it to this output.
-        '''
-        self.cam.set_pic_vars_from_config()
-        print(vars(self.cam))
-
-
+   
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
