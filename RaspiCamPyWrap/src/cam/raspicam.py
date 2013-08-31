@@ -89,8 +89,8 @@ class RaspiCam(object):
         # Lets start taking photos!
         try:                    
             while True:
-                filename = self.create_photo_filename(name=self.photo_name)
                 self.set_pic_vars_from_config()
+                filename = self.create_photo_filename()                
                 
                 # Set Exposure and Automatic White Balance for day or night time.
                 self.set_ex_and_awb()
@@ -116,7 +116,7 @@ class RaspiCam(object):
             print("\nGoodbye!")
     
     
-    def create_photo_filename(self, name='photo'):
+    def create_photo_filename(self):
         '''
         This method will create a base directory using the photo_dir config 
         variable.
@@ -130,7 +130,7 @@ class RaspiCam(object):
         directory = self.photo_dir + '/' + strftime('%Y_%m_%d')
         self.create_dir(directory)
         
-        filename = directory + '/' + name + '_' + self.current_timestamp() + '.jpg'
+        filename = directory + '/' + self.photo_name + '_' + self.current_timestamp() + '.jpg'
         
         return filename
         
