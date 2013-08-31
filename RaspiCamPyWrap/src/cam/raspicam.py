@@ -61,10 +61,7 @@ class RaspiCam(object):
         
         self.dawn = 7
         self.dusk = 20
-    
-        # Config object used to get values from the config file.
-        self.conf = Config()
-        
+                
     
     def set_pic_vars_from_config(self):
         '''
@@ -74,7 +71,9 @@ class RaspiCam(object):
         If the config file does NOT exist, then the default values in the 
         constructor will be used.
         '''        
-        pic_vals = self.conf.get_picture_vals()
+        # Config object used to get values from the config file.
+        conf = Config()
+        pic_vals = conf.get_picture_vals()
         for (key, val) in pic_vals:
             setattr(self, key, val)
      
