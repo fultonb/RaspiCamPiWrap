@@ -3,10 +3,11 @@ Created on Aug 23, 2013
 
 @author: Brad
 '''
-
+import logging
+import socket
 class Logger(object):
     '''
-    classdocs
+    This is a wrapper class for logging.
     '''
 
 

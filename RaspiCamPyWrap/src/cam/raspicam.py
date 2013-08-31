@@ -5,8 +5,11 @@ Created on Aug 22, 2013
 '''
 from datetime import datetime
 import time
+from time import strftime
 import subprocess
 from utils.config import Config
+import os
+
 
 
 #===============================================================================
@@ -53,7 +56,8 @@ class RaspiCam(object):
         
         self.photo_interval = 60 # Interval between photos (seconds)
         
-        self.photo_dir = 'today'
+        self.photo_dir = './pics'
+        self.photo_name = 'photo'
         
         self.dawn = 7
         self.dusk = 20
@@ -83,9 +87,9 @@ class RaspiCam(object):
         the picam.config file.
         '''
         # Lets start taking photos!
-        try:
+        try:                    
             while True:
-                filename = self.photo_dir + '/photo_' + self.current_timestamp() + '.jpg'
+                filename = self.create_photo_filename(name=self.photo_name)
                 self.set_pic_vars_from_config()
                 
                 # Set Exposure and Automatic White Balance for day or night time.
@@ -112,6 +116,36 @@ class RaspiCam(object):
             print("\nGoodbye!")
     
     
+    def create_photo_filename(self, name='photo'):
+        '''
+        This method will create a base directory using the photo_dir config 
+        variable.
+        A sub directory will be created in the format of Year_Month_Day.
+        The filename consists of the 'name' argument passed into the method 
+        and a timestamp.
+        
+        Ex. ./pics/2013_08_30/photo_2013-08-30_09-59-09.501599.jpg
+        '''
+        # Create directory if it doesn't already exist.
+        directory = self.photo_dir + '/' + strftime('%Y_%m_%d')
+        self.create_dir(directory)
+        
+        filename = directory + '/' + name + '_' + self.current_timestamp() + '.jpg'
+        
+        return filename
+        
+        
+    def create_dir(self, directory):
+        '''
+        This method will create a directory if it doesn't already exist.
+        '''
+        try:
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+        except Exception as e:
+            print(e)
+            
+            
     def set_ex_and_awb(self):
         '''
         This method changes the Exposure and Automatic White Balance for
