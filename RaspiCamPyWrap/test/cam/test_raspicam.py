@@ -99,6 +99,15 @@ class Test(unittest.TestCase):
         print(vars(self.cam))
 
 
+    def test_create_photo_filename_VISUALLY(self):
+        '''
+        The filename uses the current date, so this will be inspected visually.
+        '''
+        self.cam.set_pic_vars_from_config()
+        filename = self.cam.create_photo_filename()
+        print(filename)
+
+
     #----------------------- Helper functions --------------------------------#
     
     def set_to_night_time(self):

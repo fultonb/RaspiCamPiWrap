@@ -56,7 +56,7 @@ class RaspiCam(object):
         
         self.photo_interval = 60 # Interval between photos (seconds)
         
-        self.photo_dir = './pics'
+        self.photo_dir = 'pics'
         self.photo_name = 'photo'
         
         self.dawn = 7

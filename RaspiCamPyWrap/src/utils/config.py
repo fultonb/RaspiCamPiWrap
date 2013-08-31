@@ -26,11 +26,22 @@ class Config(object):
         '''
         Constructor
         '''
-        self.set_config_file_path()
-        self.config = configparser.ConfigParser()
-        self.config.read(self.config_file)
+        self.read_config_file()
         
-        
+    
+    def read_config_file(self):
+        '''
+        This method reads the config file associated with the system 
+        they are on (Windows or Linux).
+        '''
+        try:
+            self.set_config_file_path()
+            self.config = configparser.ConfigParser()
+            self.config.read(self.config_file)
+        except Exception as e:
+            print(e)
+            
+            
     def set_config_file_path(self):
         '''
         Path seems to be different on Windows and Linux platforms.
@@ -54,14 +65,14 @@ class Config(object):
         return_val = []
         try:
             items = self.config.items('pictures')
-            for (key, val) in items:
-                # Get original string values
-                if val.isalpha():
-                    return_val.append((key, val))
+            for (key, val) in items:               
                 # Convert strings to integers or floats
-                elif val.isdigit():
+                if val.isdigit():
                     new_val = ast.literal_eval(val)
                     return_val.append((key, new_val))
+                # Get original string values
+                else:
+                    return_val.append((key, val))
         except configparser.NoSectionError:
             print('A NoSectionError has occurred.')
                 
