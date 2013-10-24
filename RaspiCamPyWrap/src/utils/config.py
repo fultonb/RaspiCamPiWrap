@@ -3,7 +3,7 @@ Created on Aug 23, 2013
 
 @author: Brad
 '''
-import configparser
+import ConfigParser
 import os
 import platform
 import ast
@@ -36,7 +36,7 @@ class Config(object):
         '''
         try:
             self.set_config_file_path()
-            self.config = configparser.ConfigParser()
+            self.config = ConfigParser.ConfigParser()
             self.config.read(self.config_file)
         except Exception as e:
             print(e)
@@ -73,7 +73,7 @@ class Config(object):
                 # Get original string values
                 else:
                     return_val.append((key, val))
-        except configparser.NoSectionError:
+        except ConfigParser.NoSectionError:
             print('A NoSectionError has occurred.')
                 
         return return_val
@@ -88,7 +88,7 @@ class Config(object):
         return_val = []
         try:
             return_val = self.config.items('video')
-        except configparser.NoSectionError:
+        except ConfigParser.NoSectionError:
             print('A NoSectionError has occurred.')
                 
         return return_val

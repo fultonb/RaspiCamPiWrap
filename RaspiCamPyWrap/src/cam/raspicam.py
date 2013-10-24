@@ -139,8 +139,8 @@ class RaspiCam(object):
         This method will create a directory if it doesn't already exist.
         '''
         try:
-            if not os.path.exists(directory):
-                os.makedirs(directory)
+            # os.makedirs throws an exception if the directory already exists.
+            os.makedirs(directory, 0755)
         except Exception as e:
             print(e)
             
@@ -148,7 +148,7 @@ class RaspiCam(object):
     def set_ex_and_awb(self):
         '''
         This method changes the Exposure and Automatic White Balance for
-        day or night time.
+        day or night time use.
         '''
         try:
             if self.is_night_time(dawn=self.dawn, dusk=self.dusk):
