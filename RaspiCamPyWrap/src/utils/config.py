@@ -49,7 +49,9 @@ class Config(object):
         
         '''
         system = platform.system()
-        if system == 'Linux':
+        if system == 'Darwin':
+            self.config_file = os.path.abspath('../../src/picam.config')
+        elif system == 'Linux':
             self.config_file = os.path.abspath('../src/picam.config')
         elif system == 'Windows':
             self.config_file = os.path.abspath('../../src/picam.config')
