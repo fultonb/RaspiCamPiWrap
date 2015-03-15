@@ -47,16 +47,21 @@ class Config(object):
         Path seems to be different on Windows and Linux platforms.
         This method makes up for the differences.
         
+        RaspberryPi - "Linux"
+        Microsoft   - "Windows"
+        Apple       - "Darwin"
         '''
         system = platform.system()
-        if system == 'Darwin':
-            self.config_file = os.path.abspath('../../src/picam.config')
-        elif system == 'Linux':
+        
+        if system == 'Linux':
             self.config_file = os.path.abspath('../src/picam.config')
         elif system == 'Windows':
             self.config_file = os.path.abspath('../../src/picam.config')
-  
+        elif system == 'Darwin':
+            self.config_file = os.path.abspath('../../src/picam.config')
         
+            
+  
     def get_picture_vals(self):
         '''
         Returns an array of tuples holding the key/value pairs for all values 
