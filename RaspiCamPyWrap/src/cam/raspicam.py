@@ -8,6 +8,7 @@ import time
 from time import strftime
 import subprocess
 from utils.config import Config
+from utils.logger import Logger
 import os
 
 
@@ -24,6 +25,7 @@ import os
 #===============================================================================
 class RaspiCam(object):
 
+    
     def __init__(self):
         '''
         Constructor
@@ -34,6 +36,12 @@ class RaspiCam(object):
         
         These default values can be changed or added to, in the picam.config file.
         '''
+        # Config object used to get values from the config file.
+        self.conf = Config()
+        
+        # Logger object
+        self.create_logger()
+        
         # Default values:
         
         # Exposure
@@ -63,6 +71,20 @@ class RaspiCam(object):
         self.dusk = 20
                 
     
+    def create_logger(self):
+        '''
+        Creates and returns the logging object used throughout the application.
+        '''
+        myLogger = Logger()
+        myLogger.LOG_DIR = '../log/'
+        myLogger.LOG_FILENAME = 'RaspiCam.out'
+        self.log = myLogger.createLogger(name='RaspiCam')
+        
+        
+    def getLogger(self):
+        return self.log
+    
+    
     def set_pic_vars_from_config(self):
         '''
         This method will set attributes for pictures, from:
@@ -71,9 +93,8 @@ class RaspiCam(object):
         If the config file does NOT exist, then the default values in the 
         constructor will be used.
         '''        
-        # Config object used to get values from the config file.
-        conf = Config()
-        pic_vals = conf.get_picture_vals()
+        
+        pic_vals = self.conf.get_picture_vals()
         for (key, val) in pic_vals:
             setattr(self, key, val)
      
@@ -89,7 +110,7 @@ class RaspiCam(object):
         try:                    
             while True:
                 self.set_pic_vars_from_config()
-                filename = self.create_photo_filename()                
+                filename = self.create_photo_filename_and_dir()                
                 
                 # Set Exposure and Automatic White Balance for day or night time.
                 self.set_ex_and_awb()
@@ -109,13 +130,15 @@ class RaspiCam(object):
                 time.sleep(self.photo_interval)
         
         except Exception as e:
-            print(e)
+            #print(e)
+            self.log.error(e)
         except KeyboardInterrupt:
             # User quit
-            print("\nGoodbye!")
+            #print("\nGoodbye!")
+            self.log.info("Goodbye!")
     
     
-    def create_photo_filename(self):
+    def create_photo_filename_and_dir(self):
         '''
         This method will create a base directory using the photo_dir config 
         variable.
@@ -141,8 +164,9 @@ class RaspiCam(object):
         try:
             # os.makedirs throws an exception if the directory already exists.
             os.makedirs(directory, 0755)
-        except Exception as e:
-            print(e)
+        except Exception:
+            # No need to print out error message every time a file is created.
+            pass
             
             
     def set_ex_and_awb(self):
@@ -158,7 +182,8 @@ class RaspiCam(object):
                 self.photo_ex = self.photo_day_ex
                 self.photo_awb = self.photo_day_awb      
         except ValueError as ve:
-            print(ve + ' Default values will be used.')              
+            print(ve + ' Default values will be used.')  
+            self.log.error(ve + ' Default values will be used.')              
         
         
     def current_timestamp(self):

@@ -104,7 +104,7 @@ class Test(unittest.TestCase):
         The filename uses the current date, so this will be inspected visually.
         '''
         self.cam.set_pic_vars_from_config()
-        filename = self.cam.create_photo_filename()
+        filename = self.cam.create_photo_filename_and_dir()
         print(filename)
 
 

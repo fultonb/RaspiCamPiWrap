@@ -1,6 +1,13 @@
+pics
+
+log
+
+*.out
 
 .pydevproject
 
 .project
 
 *.pyc
+
+.DS_Store
