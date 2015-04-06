@@ -94,11 +94,43 @@ class Config(object):
         '''
         return_val = []
         try:
-            return_val = self.config.items('video')
+            items = self.config.items('video')
+            for (key, val) in items:               
+                # Convert strings to integers or floats
+                if val.isdigit():
+                    new_val = ast.literal_eval(val)
+                    return_val.append((key, new_val))
+                # Get original string values
+                else:
+                    return_val.append((key, val))
         except ConfigParser.NoSectionError:
             print('A NoSectionError has occurred.')
-                
+             
         return return_val
+    
+    
+    def get_log_vals(self):
+        '''
+        Returns an array of tuples holding the key/value pairs.
+        Ex.  
+
+        '''
+        return_val = []
+        try:
+            items = self.config.items('logging')
+            for (key, val) in items:               
+                # Convert strings to integers or floats
+                if val.isdigit():
+                    new_val = ast.literal_eval(val)
+                    return_val.append((key, new_val))
+                # Get original string values
+                else:
+                    return_val.append((key, val))
+        except ConfigParser.NoSectionError:
+            print('A NoSectionError has occurred.')
+             
+        return return_val
+    
     
     
     

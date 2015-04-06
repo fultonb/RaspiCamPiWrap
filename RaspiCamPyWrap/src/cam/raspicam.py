@@ -36,11 +36,6 @@ class RaspiCam(object):
         
         These default values can be changed or added to, in the picam.config file.
         '''
-        # Config object used to get values from the config file.
-        self.conf = Config()
-        
-        # Logger object
-        self.create_logger()
         
         # Default values:
         
@@ -69,33 +64,41 @@ class RaspiCam(object):
         
         self.dawn = 7
         self.dusk = 20
+        
+        #Logging
+        self.log_dir = '../log'
                 
+                
+        # Config object used to get values from the config file.
+        self.conf = Config()
+        
+        # Setup logging.
+        self.log = self.create_logger()
+    
     
     def create_logger(self):
         '''
         Creates and returns the logging object used throughout the application.
         '''
         myLogger = Logger()
-        myLogger.LOG_DIR = '../log/'
+        self.set_log_vars_from_config()
+        myLogger.LOG_DIR = self.log_dir
         myLogger.LOG_FILENAME = 'RaspiCam.out'
-        self.log = myLogger.createLogger(name='RaspiCam')
+        mylog = myLogger.createLogger(name='RaspiCam')
         
-        
-    def getLogger(self):
-        return self.log
+        return mylog
     
     
-    def set_pic_vars_from_config(self):
+    def set_log_vars_from_config(self):
         '''
-        This method will set attributes for pictures, from:
+        This method will set the log file directory, from:
            src/picam.config
            
         If the config file does NOT exist, then the default values in the 
         constructor will be used.
         '''        
-        
-        pic_vals = self.conf.get_picture_vals()
-        for (key, val) in pic_vals:
+        log_vals = self.conf.get_log_vals()
+        for (key, val) in log_vals:
             setattr(self, key, val)
      
         
@@ -138,6 +141,19 @@ class RaspiCam(object):
             self.log.info("Goodbye!")
     
     
+    def set_pic_vars_from_config(self):
+        '''
+        This method will set attributes for pictures, from:
+           src/picam.config
+           
+        If the config file does NOT exist, then the default values in the 
+        constructor will be used.
+        '''        
+        pic_vals = self.conf.get_picture_vals()
+        for (key, val) in pic_vals:
+            setattr(self, key, val)
+            
+            
     def create_photo_filename_and_dir(self):
         '''
         This method will create a base directory using the photo_dir config 

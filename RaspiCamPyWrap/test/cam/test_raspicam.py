@@ -96,6 +96,7 @@ class Test(unittest.TestCase):
         the src/picam.config file and compare it to this output.
         '''
         self.cam.set_pic_vars_from_config()
+        self.cam.set_log_vars_from_config()
         print(vars(self.cam))
 
 
