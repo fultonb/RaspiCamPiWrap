@@ -31,7 +31,7 @@ class Logger(object):
         Constructor
         '''
         # Default values.
-        self.LOG_DIR = 'log/'
+        self.LOG_DIR = './log/'
         self.LOG_FILENAME = 'logging_rotatingfile_example.out'
         self.level = logging.DEBUG
         self.maxBytes = 1000000
@@ -91,9 +91,29 @@ class Logger(object):
     def createLogDir(self):
         '''
         This method creates the logging directory if it doesn't already exist.
+        If the directory cannot be created, then a local log directory will be
+        created.
         '''
         directory = self.LOG_DIR
-        if not os.path.exists(directory):
-            os.makedirs(directory)
+        try:
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+        except Exception:
+            print 'Could not create: ' + os.path.realpath(self.LOG_DIR)
+            self.createDefaultLogDir()
             
             
+    def createDefaultLogDir(self):
+        '''
+        This method creates the default logging directory (./log/).
+        '''
+        self.LOG_DIR = './log/'
+        directory = self.LOG_DIR
+        try:
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+                
+            print 'Created: ' + os.path.realpath(self.LOG_DIR)
+        except Exception as e:
+            print e
+                   

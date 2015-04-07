@@ -83,6 +83,23 @@ class Test(unittest.TestCase):
         for filename in logfiles:
             os.remove(filename)
             
+    def test_wrong_file_path(self):
+        '''
+        File path should revert to default if not found.
+        '''
+        # Create default test logger.
+        self.my_log.LOG_DIR = '/this/path/does/not/exist'
+        self.my_log.createLogger(name='MyTestLogger_1')
+         
+        # See what files are created.
+        logfiles = glob.glob('%s*' % self.my_log.LOG_DIR_AND_NAME)
+        
+        # Clean up.
+        for filename in logfiles:
+            os.remove(filename)
+            
+        os.removedirs('./log')
+            
             
             
             
