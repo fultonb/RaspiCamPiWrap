@@ -69,22 +69,12 @@ class Config(object):
         Ex.  [('ex', 'auto'), ('awb', 'auto'), ('photo_ev', '0'), ...]
 
         '''
-        return_val = []
         try:
-            items = self.config.items('pictures')
-            for (key, val) in items:               
-                # Convert strings to integers or floats
-                if val.isdigit():
-                    new_val = ast.literal_eval(val)
-                    return_val.append((key, new_val))
-                # Get original string values
-                else:
-                    return_val.append((key, val))
-        except ConfigParser.NoSectionError:
-            print('A NoSectionError has occurred.')
-                
-        return return_val
-        
+            vals = self.__get_vals('pictures')
+        except NameError as ne:
+            print(ne)
+            
+        return vals
                 
     def get_video_vals(self):
         '''
@@ -92,32 +82,43 @@ class Config(object):
         Ex.  [('ex', 'auto'), ('awb', 'auto'), ('photo_ev', '0'), ...]
 
         '''
-        return_val = []
         try:
-            items = self.config.items('video')
-            for (key, val) in items:               
-                # Convert strings to integers or floats
-                if val.isdigit():
-                    new_val = ast.literal_eval(val)
-                    return_val.append((key, new_val))
-                # Get original string values
-                else:
-                    return_val.append((key, val))
-        except ConfigParser.NoSectionError:
-            print('A NoSectionError has occurred.')
-             
-        return return_val
+            vals = self.__get_vals('video')
+        except NameError as ne:
+            print(ne)
+            
+        return vals
     
     
     def get_log_vals(self):
         '''
         Returns an array of tuples holding the key/value pairs.
-        Ex.  
+        Ex.  [('log_dir', '../log/')]
 
+        '''
+        try:
+            vals = self.__get_vals('logging')
+        except NameError as ne:
+            print(ne)
+            
+        return vals
+        
+    
+    def __get_vals(self, value_type):
+        '''
+        Returns the key, value pairs of a given type in an array.
+        Type examples are pictures, video, and logging.
+        
+        Example for 'logging':  [('log_dir', '../log/')]
         '''
         return_val = []
         try:
-            items = self.config.items('logging')
+            vals = ['pictures', 'video', 'logging']
+            if value_type not in vals:
+                raise NameError('Config value_type must be one of these: ' + 
+                                    str(vals))
+            
+            items = self.config.items(value_type)
             for (key, val) in items:               
                 # Convert strings to integers or floats
                 if val.isdigit():
@@ -126,6 +127,8 @@ class Config(object):
                 # Get original string values
                 else:
                     return_val.append((key, val))
+        except NameError:
+            raise
         except ConfigParser.NoSectionError:
             print('A NoSectionError has occurred.')
              
