@@ -66,7 +66,7 @@ class RaspiCam(object):
         self.dusk = 20
         
         #Logging
-        self.log_dir = '../log'
+        self.log_dir = '../log/'
                 
                 
         # Config object used to get values from the config file.
